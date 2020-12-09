@@ -23,8 +23,19 @@ router.get('/', authorize, (request, response) => {
 });
 
 router.post('/', authorize,  (request, response) => {
-
     // Endpoint to create a new post
+    if (!request.body.text && !request.body.media.url){
+        response.status(400).json()
+        return
+    }
+    console.log(request)
+    PostModel.create({
+        "userId":request.currentUser.id,
+        "text": request.body.text,
+        "media": request.body.media
+    }, () => {
+        response.status(201).json()
+    })
 
 });
 
