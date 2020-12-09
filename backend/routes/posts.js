@@ -28,7 +28,7 @@ router.post('/', authorize,  (request, response) => {
         response.status(400).json()
         return
     }
-    console.log(request)
+    
     PostModel.create({
         "userId":request.currentUser.id,
         "text": request.body.text,
