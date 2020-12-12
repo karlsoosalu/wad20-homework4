@@ -2,6 +2,7 @@ import {mount, createLocalVue} from '@vue/test-utils'
 import Vuex from 'vuex'
 import VueRouter from 'vue-router'
 import Posts from "../../src/components/Posts.vue";
+import moment from 'moment';
 
 const localVue = createLocalVue();
 
@@ -97,10 +98,47 @@ jest.mock("axios", () => ({
 }));
 
 describe('Posts', () => {
-
     const wrapper = mount(Posts, {router, store, localVue});
 
     it('1 == 1', function () {
         expect(true).toBe(true)
+    });
+});
+
+describe('Posts', () => {
+    const wrapper = mount(Posts, {router, store, localVue});
+    const wrapperPosts = wrapper.findAll('.post')
+
+    // post numbers
+    it('exactly as many posts are rendered as contained in testData', () => {
+        expect(wrapper.findAll('.post').length).toEqual(testData.length);
+    });
+
+    // media render
+    it('media is rendered correctly', () => {
+        for (let i = 0; i < wrapperPosts.length; i++) {
+        	let wrapperPost = wrapperPosts.at(i);
+        	let testPost = testData[i];
+
+        	if (testPost.media) {
+        		if (testPost.media.type === "image") {
+        			expect(wrapperPost.find('.post-image').find('img').exists()).toBe(true);
+        		} else if (testPost.media.type === "video") {        			
+        			expect(wrapperPost.find('.post-image').find('video').exists()).toBe(true);
+        		}
+        	} else {
+        		expect(wrapperPost.find('.post-image').exists()).toBe(false);
+        	}
+        }
+    });
+
+    // post time
+    it('post create time is displayed in correct format', () => {
+        for (let i = 0; i < wrapperPosts.length; i++) {
+        	let wrapperPost = wrapperPosts.at(i);
+        	let date = wrapper.vm.posts[i].createTime;
+
+        	expect(moment(date).format('LLLL')).toEqual(wrapper.find('.post-author > small').text());
+        }
     });
 });
