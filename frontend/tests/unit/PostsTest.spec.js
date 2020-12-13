@@ -135,7 +135,6 @@ describe('Posts', () => {
     // post time
     it('post create time is displayed in correct format', () => {
         for (let i = 0; i < wrapperPosts.length; i++) {
-        	let wrapperPost = wrapperPosts.at(i);
         	let date = wrapper.vm.posts[i].createTime;
 
         	expect(moment(date).format('LLLL')).toEqual(wrapper.find('.post-author > small').text());

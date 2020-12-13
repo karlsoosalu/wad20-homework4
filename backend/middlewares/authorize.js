@@ -1,4 +1,5 @@
 const UserModel = require('../models/UserModel');
+const jwt = require("../library/jwt")
 
 module.exports = (request, response, next) => {
 
@@ -10,7 +11,15 @@ module.exports = (request, response, next) => {
     */
 
     if (request.headers.authorization) {
-        UserModel.getById(1, (user) => {
+        token = jwt.verifyAccessToken(request.headers.authorization.slice(7))
+
+        if (!token){
+            return response.status(401).json({
+                message: 'Unauthorized token'
+            })
+        }
+
+        UserModel.getById(token.id, (user) => {
             request.currentUser = user;
             next();
         });

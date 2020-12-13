@@ -24,7 +24,9 @@ router.get('/', authorize, (request, response) => {
 
 router.post('/', authorize,  (request, response) => {
     // Endpoint to create a new post
-    if (!request.body.text && !request.body.media.url){
+    
+    if (!request.body.text && (!request.body.media.url || !request.body.media.type)){
+        console.log("Please enter text or media!")
         response.status(400).json()
         return
     }
@@ -43,7 +45,7 @@ router.post('/', authorize,  (request, response) => {
 router.put('/:postId/likes', authorize, (request, response) => {
 
     // Endpoint for current user to like a post
-    PostModel.like(request.currentUser.id, request.params.postId, (postIds) => {
+    PostModel.like(request.currentUser.id, request.params.postId, () => {
         response.status(201).json()
     });
 });
@@ -51,7 +53,7 @@ router.put('/:postId/likes', authorize, (request, response) => {
 router.delete('/:postId/likes', authorize, (request, response) => {
 
     // Endpoint for current user to unlike a post
-    PostModel.unlike(request.currentUser.id, request.params.postId, (postIds) => {
+    PostModel.unlike(request.currentUser.id, request.params.postId, () => {
         response.status(201).json()
     });
 });
